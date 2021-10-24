@@ -1,0 +1,6 @@
+tensorflow
+tensorflow_hub
+pandas
+python-opencv2
+Flask
+numpy
