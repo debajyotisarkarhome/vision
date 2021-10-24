@@ -1,0 +1,1 @@
+ - [24/10/2021] : Basic object detection loopback of a ~3MB image getting ~2sec delay with no network delay and no GPU

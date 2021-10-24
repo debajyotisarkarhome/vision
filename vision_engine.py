@@ -3,8 +3,9 @@ import cv2
 import numpy
 import tensorflow as tf
 import pandas as pd
-from flask import Flask, request, jsonify
+from flask import Flask, json, request, jsonify, send_file
 import os
+import matplotlib.pyplot as plt
 
 width = 512
 height = 512
@@ -24,12 +25,27 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def process_image(frame):
+    id=0
+    return_dict={}
     frame_resized=cv2.resize(frame,(width,height))
     rgb=cv2.cvtColor(frame_resized, cv2.COLOR_BGR2RGB)
     rgb_tensor = tf.convert_to_tensor(rgb, dtype=tf.uint8)
     rgb_tensor = tf.expand_dims(rgb_tensor , 0)
     boxes, scores, classes, num_detections = detector(rgb_tensor)
-    return str(boxes)
+
+    # Processing outputs
+    pred_labels = classes.numpy().astype('int')[0] 
+    pred_labels = [labels[i] for i in pred_labels]
+    pred_boxes = boxes.numpy()[0].astype('int')
+    pred_scores = scores.numpy()[0]
+
+    for score, (ymin,xmin,ymax,xmax), label in zip(pred_scores, pred_boxes, pred_labels):
+        if score < 0.5:
+            continue
+        score_txt = f'{100 * round(score)}%'
+        return_dict[id]={"confidence":score_txt,"box":list(map(int,[ymin,xmin,ymax,xmax])),"label":label}
+        id=id+1
+    return jsonify(return_dict)
 
 
 
