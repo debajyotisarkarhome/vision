@@ -52,8 +52,8 @@ def process_image(frame):
 
 @app.route("/detect",methods=["POST"])
 def get_frame():
-    #if "file" not in request.files:
-        #return(jsonify({"error":"Image file NOt Found"}))
+    if "upload_file" not in request.files:
+        return(jsonify({"error":"Image file Not Found"}))
     file = request.files["upload_file"]
     img = cv2.imdecode(numpy.fromstring(request.files['upload_file'].read(), numpy.uint8), cv2.IMREAD_UNCHANGED)
     return process_image(img)
