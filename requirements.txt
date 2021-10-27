@@ -1,6 +1,6 @@
 tensorflow
 tensorflow_hub
 pandas
-python-opencv2
+opencv-python
 Flask
 numpy
